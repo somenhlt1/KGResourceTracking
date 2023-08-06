@@ -1,5 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+
+using KGResourceTracking.Data;
+using KGResourceTracking.KingdomAP;
+
 using MaterialDesignThemes.Wpf;
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,6 +24,11 @@ public partial class App : Application
     {
         using IHost host = CreateHostBuilder(args).Build();
         host.Start();
+        using (var scope = host.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+        using (var context = scope.ServiceProvider.GetRequiredService<KingdomGuardAPContext>())
+        {
+            context.Database.Migrate();
+        }
 
         App app = new();
         app.InitializeComponent();
@@ -34,11 +45,15 @@ public partial class App : Application
         {
             services.AddSingleton<MainWindow>();
             services.AddSingleton<MainWindowViewModel>();
-
+            services.AddSingleton<AddNewApViewModel>();
+            services.AddSingleton<ViewPlayerApViewModel>();
             services.AddSingleton<WeakReferenceMessenger>();
             services.AddSingleton<IMessenger, WeakReferenceMessenger>(provider => provider.GetRequiredService<WeakReferenceMessenger>());
 
             services.AddSingleton(_ => Current.Dispatcher);
+
+            services.AddDbContext<KingdomGuardAPContext>();
+            services.AddSingleton<KingdomGuardPlayerDataServiceControllers>();
 
             services.AddTransient<ISnackbarMessageQueue>(provider =>
             {

@@ -12,7 +12,8 @@
 
         <ResourceDictionary
                     Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-
+        <ResourceDictionary 
+          Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
       </ResourceDictionary.MergedDictionaries>
 
       <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignAccentCheckBox}" />

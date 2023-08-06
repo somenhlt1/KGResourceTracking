@@ -1,0 +1,59 @@
+﻿<UserControl x:Class="KGResourceTracking.KingdomAP.AddAPView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:KGResourceTracking.KingdomAP"
+             d:DataContext="{d:DesignInstance Type=local:AddNewApViewModel,IsDesignTimeCreatable=False}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+    <materialDesign:Card Margin="20">
+      <Grid Margin="15">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBox 
+          Grid.Row="0"       
+          Text="{Binding PlayerId,UpdateSourceTrigger=PropertyChanged}" 
+                 Style="{StaticResource MaterialDesignFilledTextBox}"
+                 materialDesign:HintAssist.Hint="Player ID"/>
+        <TextBox 
+          Grid.Row="1"       
+          Text="{Binding PlayerName}" 
+                 Style="{StaticResource MaterialDesignFilledTextBox}"
+                 materialDesign:HintAssist.Hint="Player Name"/>
+        <ComboBox 
+           Grid.Row="2"     
+          Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+          materialDesign:HintAssist.Hint="Select Your AP Type"
+          materialDesign:HintAssist.Foreground="{StaticResource MaterialDesignLightForeground}"
+          Width="Auto"
+          Height="50"
+          Margin="5"
+          ItemsSource="{Binding ApTypes}"
+          SelectedValuePath="Key"
+          DisplayMemberPath="Value"
+          SelectedValue="{Binding ApTypeChoice}"
+          />
+        <TextBox
+           Grid.Row="3"     
+          Text="{Binding Quality}" 
+                 Style="{StaticResource MaterialDesignFilledTextBox}"
+                 materialDesign:HintAssist.Hint="Quality"/>
+
+        <Button 
+                Grid.Row="5"           
+                HorizontalAlignment="Right"
+                Content="Add" 
+                Command="{Binding SubmitCommand}"/>
+      </Grid>
+    </materialDesign:Card>
+    </Grid>
+</UserControl>

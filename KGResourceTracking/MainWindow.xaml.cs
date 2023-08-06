@@ -1,5 +1,7 @@
 ﻿using System.Windows.Input;
 
+using KGResourceTracking.KingdomAP;
+
 namespace KGResourceTracking;
 
 /// <summary>
@@ -7,10 +9,13 @@ namespace KGResourceTracking;
 /// </summary>
 public partial class MainWindow
 {
-    public MainWindow(MainWindowViewModel viewModel)
+    public MainWindow(ViewPlayerApViewModel viewPlayerApViewModel, AddNewApViewModel addNewApViewModel)
     {
-        DataContext = viewModel;
+        //DataContext = viewModel;
         InitializeComponent();
+
+        AddAp.DataContext = addNewApViewModel;
+        ViewAp.DataContext = viewPlayerApViewModel;
 
         CommandBindings.Add(new CommandBinding(ApplicationCommands.Close, OnClose));
     }
