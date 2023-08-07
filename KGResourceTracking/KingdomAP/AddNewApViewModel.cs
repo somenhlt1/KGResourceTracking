@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 
 using KGResourceTracking.Data;
 
+using MaterialDesignThemes.Wpf;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace KGResourceTracking.KingdomAP;
@@ -11,8 +13,8 @@ public partial class AddNewApViewModel : ObservableObject
 {
     private readonly KingdomGuardAPContext DbContext;
     private readonly KingdomGuardPlayerDataServiceControllers _dBControler;
-    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SubmitCommand))]
+    [ObservableProperty]
     private string _playerId = string.Empty;
     [ObservableProperty]
     private string _playerName = string.Empty;
@@ -31,13 +33,17 @@ public partial class AddNewApViewModel : ObservableObject
 
     [ObservableProperty]
     private int _quality;
-    public AddNewApViewModel(KingdomGuardAPContext dbContext, KingdomGuardPlayerDataServiceControllers dBControler)
+
+    public ISnackbarMessageQueue MessagQueue { get; }
+
+    public AddNewApViewModel(KingdomGuardAPContext dbContext, KingdomGuardPlayerDataServiceControllers dBControler, ISnackbarMessageQueue messagQueue)
     {
         DbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         _dBControler = dBControler;
+        MessagQueue = messagQueue;
     }
 
-    [RelayCommand(CanExecute = nameof(CanSubmit))]
+    [RelayCommand(CanExecute = nameof(CanSubmit),AllowConcurrentExecutions =false)]
     private async Task OnSubmit()
     {
         if (string.IsNullOrEmpty(PlayerId))
@@ -45,14 +51,15 @@ public partial class AddNewApViewModel : ObservableObject
         ApType newAp = new()
         {
             Type = ApTypeChoice,
-            Id = Int32.Parse(PlayerId),
+            Id = int.Parse(PlayerId),
             Count = Quality,
         };
         //Add player
-        Player newPlayData = new Player() { Id = Int32.Parse(PlayerId), PlayerName = PlayerName };
+        Player newPlayData = new Player() { Id = int.Parse(PlayerId), PlayerName = PlayerName };
         await _dBControler.AddPlayer(newPlayData);
         await _dBControler.SaveAndUpdateApForPlayer(newAp);
         await DbContext.SaveChangesAsync();
+        MessagQueue.Enqueue("Saved!");
     }
     private bool CanSubmit() => !string.IsNullOrWhiteSpace(PlayerId);
 

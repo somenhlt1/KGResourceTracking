@@ -8,6 +8,9 @@
              d:DataContext="{d:DesignInstance Type=local:AddNewApViewModel,IsDesignTimeCreatable=False}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+  <UserControl.Resources>
+    <local:IntegerGreaterThanZeroToBooleanConverter x:Key="IntegerGreaterThanZeroConverter"/>
+  </UserControl.Resources>
     <Grid>
     <materialDesign:Card Margin="20">
       <Grid Margin="15">
@@ -21,39 +24,62 @@
         </Grid.RowDefinitions>
         <TextBox 
           Grid.Row="0"       
+          Margin="5"
+          Style="{StaticResource MaterialDesignOutlinedTextBox}"
           Text="{Binding PlayerId,UpdateSourceTrigger=PropertyChanged}" 
-                 Style="{StaticResource MaterialDesignFilledTextBox}"
                  materialDesign:HintAssist.Hint="Player ID"/>
         <TextBox 
           Grid.Row="1"       
-          Text="{Binding PlayerName}" 
-                 Style="{StaticResource MaterialDesignFilledTextBox}"
-                 materialDesign:HintAssist.Hint="Player Name"/>
-        <ComboBox 
-           Grid.Row="2"     
-          Style="{StaticResource MaterialDesignFloatingHintComboBox}"
-          materialDesign:HintAssist.Hint="Select Your AP Type"
-          materialDesign:HintAssist.Foreground="{StaticResource MaterialDesignLightForeground}"
-          Width="Auto"
-          Height="50"
           Margin="5"
+           Style="{StaticResource MaterialDesignOutlinedTextBox}"
+          Text="{Binding PlayerName}" 
+                 materialDesign:HintAssist.Hint="Player Name"/>
+        <Grid Grid.Row="2">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+          </Grid.ColumnDefinitions>
+          <ComboBox 
+           Grid.Column="0"     
+          materialDesign:ColorZoneAssist.Mode="SecondaryLight"
+          materialDesign:HintAssist.HelperText="Select one OS"
+          materialDesign:TextFieldAssist.UnderlineBrush="{DynamicResource SecondaryHueMidBrush}"
+          Style="{StaticResource MaterialDesignFilledComboBox}"
+          materialDesign:HintAssist.Hint="AP Type"
+          materialDesign:HintAssist.Foreground="{StaticResource MaterialDesignLightForeground}"
+          Margin="10"
           ItemsSource="{Binding ApTypes}"
           SelectedValuePath="Key"
           DisplayMemberPath="Value"
           SelectedValue="{Binding ApTypeChoice}"
           />
-        <TextBox
-           Grid.Row="3"     
-          Text="{Binding Quality}" 
-                 Style="{StaticResource MaterialDesignFilledTextBox}"
-                 materialDesign:HintAssist.Hint="Quality"/>
+          <TextBox
+          Grid.Column="1" 
+          Height="43"
+          x:Name="QualityBox"
+          Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+          materialDesign:HintAssist.Hint="Quality">
+            <TextBox.Text>
+              <Binding
+      Mode="TwoWay"
+      Path="Quality"
+      UpdateSourceTrigger="PropertyChanged">
+                <Binding.ValidationRules>
+                  <local:IntegerLessThanZeroValidationRule ValidatesOnTargetUpdated="True"/>
+                </Binding.ValidationRules>
+              </Binding>
+            </TextBox.Text>
+          </TextBox>
+        </Grid>
 
         <Button 
                 Grid.Row="5"           
                 HorizontalAlignment="Right"
+                IsEnabled="{Binding ElementName=QualityBox,Path=(Validation.Errors).Count,Converter={StaticResource IntegerGreaterThanZeroConverter}}"
                 Content="Add" 
                 Command="{Binding SubmitCommand}"/>
       </Grid>
     </materialDesign:Card>
-    </Grid>
+    <materialDesign:Snackbar x:Name="SnackbarThree" MessageQueue="{Binding MessagQueue}" VerticalAlignment="Bottom" />
+  </Grid>
 </UserControl>
